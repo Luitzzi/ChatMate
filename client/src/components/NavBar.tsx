@@ -22,6 +22,7 @@ export const NavBar = () => {
 
                       border: `1px solid ${token.colorPrimary}`,
                       borderRadius: token.borderRadius,
+                      fontWeight: "bold"
                   }}>
                 ChatMate
             </Link>

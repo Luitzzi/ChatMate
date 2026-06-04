@@ -1,8 +1,10 @@
 import {Button, Flex, Input, theme} from "antd";
 import {useState} from "react";
+import type {Message, UUID} from "./Message.ts";
+import {uuidv7} from "uuidv7";
 
 export type MessageInputProps = {
-    onSend: (message: string) => void;
+    onSend: (message: Message) => void;
 }
 
 export const MessageInput = ({onSend}: MessageInputProps) => {
@@ -10,7 +12,11 @@ export const MessageInput = ({onSend}: MessageInputProps) => {
     const [input, setInput] = useState<string>();
     const handleSend = () => {
         if (input !== undefined)
-            onSend(input);
+            onSend({
+                senderId: uuidv7() as UUID,
+                sender: "Fred",
+                message: input,
+            });
     }
 
     return (
