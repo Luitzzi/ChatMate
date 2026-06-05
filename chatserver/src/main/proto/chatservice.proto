@@ -1,5 +1,5 @@
 syntax = "proto3";
-package de.othr.vs.grpc;
+package de.luisgerlinger.grpc;
 option java_multiple_files = true;
 import "google/protobuf/timestamp.proto";
 
@@ -7,6 +7,7 @@ enum MessageType {
   GLOBAL = 0;
   GROUP = 1;
   PRIVATE = 2;
+  AUTH = 3;
 }
 
 message Message {

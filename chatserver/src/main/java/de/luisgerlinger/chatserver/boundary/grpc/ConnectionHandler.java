@@ -1,6 +1,6 @@
 package de.luisgerlinger.chatserver.boundary.grpc;
 
-import de.othr.vs.grpc.Message;
+import de.luisgerlinger.grpc.Message;
 import io.grpc.stub.StreamObserver;
 
 import java.util.UUID;

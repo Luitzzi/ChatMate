@@ -1,7 +1,7 @@
 package de.luisgerlinger.chatserver.boundary.grpc;
 
-import de.othr.vs.grpc.Message;
-import de.othr.vs.grpc.MessageServiceGrpc;
+import de.luisgerlinger.grpc.Message;
+import de.luisgerlinger.grpc.MessageServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 import java.util.Map;
