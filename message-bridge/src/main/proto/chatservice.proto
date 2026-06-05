@@ -1,0 +1,23 @@
+syntax = "proto3";
+package de.luisgerlinger.grpc;
+option java_multiple_files = true;
+import "google/protobuf/timestamp.proto";
+
+enum MessageType {
+  GLOBAL = 0;
+  GROUP = 1;
+  PRIVATE = 2;
+  AUTH = 3;
+}
+
+message Message {
+  string senderId = 1;
+  string receiverId = 2;
+  MessageType type = 3;
+  string message = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+service MessageService {
+  rpc sendMessage (stream Message) returns (stream Message);
+}
