@@ -1,5 +1,5 @@
 import {Flex, theme, Typography} from "antd";
-import {type Message} from "./Message.ts";
+import type {Message} from "../generated/proto-types.ts";
 
 const { Text } = Typography;
 

@@ -1,39 +1,67 @@
 import {MessageArea} from "../components/MessageArea.tsx";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {MessageInput} from "../components/MessageInput.tsx";
-import {notification, theme} from "antd";
-import {uuidv7} from "uuidv7";
-import type {Message, UUID} from "../components/Message.ts";
+import {notification, Spin } from "antd";
+import {useAuth} from "../components/auth/useAuth.ts";
+import {useNavigate} from "react-router";
+import {type Message, MessageType} from "../generated/proto-types.ts";
 
-export type User = {
-    id: UUID;
-    username: string;
-}
+export const Chat = () => {
+    const navigate = useNavigate();
+    const authContext = useAuth();
+    if (authContext.token === null) {
+        notification.error({
+            title: "Token expired",
+            placement: "topRight"
+        })
+        navigate("/login");
+    }
 
-export type ChatProps = {
-    host: string;
-    port: number;
-}
-
-export const Chat = ({host, port}: ChatProps) => {
     const socketRef = useRef<WebSocket | null>(null);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
+
     const [messages, setMessages] = useState<Message[]>([]);
 
     const appendMessage = useCallback((message: Message) => {
         setMessages(prev => [...prev, message]);
     }, []);
 
-    const sendMessage = useCallback((message: Message) => {
-        if (socketRef.current !== null && socketRef.current.readyState == WebSocket.OPEN) {
-            appendMessage(message);
-            socketRef.current?.send(JSON.stringify(message));
-        } else {
-            notification.error({
-                title: `Could not send message ${message.message}`,
-                placement: "topRight"
-            })
+    const sendMessage = (message: Message) => {
+        socketRef.current?.send(JSON.stringify(message));
+    }
+
+    useEffect(() => {
+        const socket = new WebSocket("ws://localhost:8081/chat");
+        socketRef.current = socket;
+
+        socket.onopen = () => {
+            setIsConnected(true);
+            const authMessage: Message = {
+                type: MessageType.AUTH, receiverId: null,
+                message: authContext.token as string, timestamp: new Date()
+            };
+            sendMessage(authMessage);
+            console.log("Connected")
+        };
+
+        socket.onmessage = (event) => {
+            console.log("Received data: " + event.data)
+        };
+
+        socket.onerror = (error) => {
+            setIsConnected(false);
+            console.error(error);
         }
-    }, [appendMessage]);
+
+        socket.onclose = () => {
+            setIsConnected(false);
+            console.log("Disconnected");
+        };
+
+        return () => {
+            socket.close();
+        }
+    }, [authContext.token]);
 
     return (
         <div
@@ -46,7 +74,11 @@ export const Chat = ({host, port}: ChatProps) => {
 
             overflow: 'hidden',
         }}>
-            <MessageArea messages={messages} />
+            {
+                isConnected ?
+                <MessageArea messages={messages} /> :
+                <Spin />
+            }
             <MessageInput onSend={sendMessage} />
         </div>
     )

@@ -20,7 +20,7 @@ export const MessageInput = ({onSend}: MessageInputProps) => {
     }
 
     return (
-        <Flex gap={"medium"} style={{
+        <Flex gap={"medium"} align={"center"} style={{
             borderTop: `1px solid ${token.colorBorder}`,
             padding: 12,
             background: token.colorBgContainer,
