@@ -1,10 +1,9 @@
 import {Button, Flex, Input, theme} from "antd";
 import {useState} from "react";
-import type {Message, UUID} from "./Message.ts";
-import {uuidv7} from "uuidv7";
+import {MessageType, type OutgoingMessage} from "../generated/proto-types.ts";
 
 export type MessageInputProps = {
-    onSend: (message: Message) => void;
+    onSend: (message: OutgoingMessage) => void;
 }
 
 export const MessageInput = ({onSend}: MessageInputProps) => {
@@ -13,10 +12,12 @@ export const MessageInput = ({onSend}: MessageInputProps) => {
     const handleSend = () => {
         if (input !== undefined)
             onSend({
-                senderId: uuidv7() as UUID,
-                sender: "Fred",
+                type: MessageType.GLOBAL,
+                receiverId: null,
                 message: input,
-            });
+                timestamp: new Date()
+            } satisfies OutgoingMessage);
+        setInput("");
     }
 
     return (
@@ -28,7 +29,10 @@ export const MessageInput = ({onSend}: MessageInputProps) => {
             <Input.TextArea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onPressEnter={() => handleSend()}
+                onPressEnter={(e) => {
+                    e.preventDefault();
+                    handleSend();
+                }}
                 placeholder={"Type a message..."}
             />
             <Button type={"primary"} onClick={() => handleSend()}>

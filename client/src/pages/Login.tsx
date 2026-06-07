@@ -2,7 +2,7 @@ import {Button, Flex, Form, Image, Input, Spin} from "antd";
 import FormItem from "antd/es/form/FormItem";
 
 import loginIllustration from '../assets/login-image.png';
-import type {LoginRequest} from "../generated/api-types.ts";
+import type {LoginReply, LoginRequest} from "../generated/api-types.ts";
 import {useAuth} from "../components/auth/useAuth.ts";
 import {useState} from "react";
 import {useNavigate} from "react-router";
@@ -10,7 +10,7 @@ import {useNavigate} from "react-router";
 type LoginFormValues = LoginRequest;
 
 export const Login = () => {
-    const {setToken} = useAuth();
+    const {setToken, setUserId, setUserName} = useAuth();
     const navigate = useNavigate();
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
@@ -30,9 +30,11 @@ export const Login = () => {
 
             if (!response.ok)
                 throw new Error("Login failed: " + response.statusText);
-            const token: string = await response.text();
-            console.log("Token: " + token);
-            setToken(token);
+            const reply: LoginReply = await response.json();
+            console.log("Login successful, received token: " + reply.authToken);
+            setToken(reply.authToken);
+            setUserId(reply.userId);
+            setUserName(values.username);
             navigate("/chat");
         } catch (error) {
             console.error("Login failed:", error);
@@ -54,6 +56,7 @@ export const Login = () => {
                     src={loginIllustration}
                     preview={false}
                     />
+                    <h1>Login</h1>
                     <Form
                     name={"login"}
                     onFinish={login}

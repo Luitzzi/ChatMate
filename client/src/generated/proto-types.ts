@@ -7,9 +7,18 @@ export const MessageType = {
 
 export type MessageType = typeof MessageType[keyof typeof MessageType];
 
-export type Message = {
+export type IncomingMessage = {
     type: MessageType;
+    senderId: string;
+    senderName: string;
     receiverId: string | null;
     message: string;
     timestamp: Date
+}
+
+export type OutgoingMessage = {
+    type: MessageType;
+    receiverId: string | null;
+    message: string;
+    timestamp: Date;
 }

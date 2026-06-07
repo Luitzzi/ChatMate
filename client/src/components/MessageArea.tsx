@@ -1,9 +1,10 @@
 import {Virtuoso} from 'react-virtuoso';
 import {ChatBubble} from "./ChatBubble.tsx";
-import type {Message} from "./Message.ts";
+import type {IncomingMessage} from "../generated/proto-types.ts";
+
 
 export type MessageAreaProps = {
-    messages: Message[];
+    messages: IncomingMessage[];
 }
 
 export const MessageArea = ({messages}: MessageAreaProps) => {
@@ -25,6 +26,5 @@ export const MessageArea = ({messages}: MessageAreaProps) => {
                 }}
             />
         </div>
-
-);
+    );
 }

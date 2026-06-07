@@ -1,16 +1,21 @@
-import {BrowserRouter, Route, Routes} from "react-router";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router";
 import {RootLayout} from "./layouts/RootLayout.tsx";
 import {RouteNotFound} from "./pages/RouteNotFound.tsx";
 import {Chat} from "./pages/Chat.tsx";
 import {Login} from "./pages/Login.tsx";
+import {useAuth} from "./components/auth/useAuth.ts";
 
 export const AllRoutes = () => {
+    const authContext = useAuth();
+
     return (
         <BrowserRouter>
             <Routes>
                 <Route element={<RootLayout />}>
+                    <Route path={"/"} element={
+                        authContext.token == null ? <Navigate to={"/login"} /> : <Chat />} />
                     <Route path={"/login"} element={<Login />} />
-                    <Route path={"/chat"} element={<Chat host={"localhost"} port={8080}/>} />
+                    <Route path={"/chat"} element={<Chat />} />
                     <Route path={"/*"} element={<RouteNotFound />} />
                 </Route>
             </Routes>
