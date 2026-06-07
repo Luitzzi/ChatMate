@@ -1,6 +1,6 @@
 package de.luisgerlinger.messagebridge;
 
-import de.luisgerlinger.grpc.Message;
+import de.luisgerlinger.grpc.OutgoingMessage;
 import io.grpc.stub.StreamObserver;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 @Slf4j
-public class MessageReceiver implements StreamObserver<Message> {
+public class MessageReceiver implements StreamObserver<OutgoingMessage> {
     private final ConnectionHandler connectionHandler;
     private final WebSocketSession webSocketSession;
     private final MessageMapper messageMapper;
@@ -25,7 +25,8 @@ public class MessageReceiver implements StreamObserver<Message> {
 
     @SneakyThrows
     @Override
-    public void onNext(Message value) {
+    public void onNext(OutgoingMessage value) {
+        log.info("Forwarding message {} to the client", value);
         String json = messageMapper.getJson(value);
         if (json != null) {
             webSocketSession.sendMessage(new TextMessage(json));

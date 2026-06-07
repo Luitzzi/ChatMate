@@ -1,6 +1,6 @@
 package de.luisgerlinger.messagebridge;
 
-import de.luisgerlinger.grpc.Message;
+import de.luisgerlinger.grpc.IncomingMessage;
 import de.luisgerlinger.grpc.MessageServiceGrpc;
 import de.luisgerlinger.grpc.MessageType;
 import io.grpc.ClientInterceptor;
@@ -34,7 +34,7 @@ public class ConnectionHandler extends TextWebSocketHandler {
         this.messageMapper = messageMapper;
         connectionContextByWebsocketId = new ConcurrentHashMap<>();
         channel = ManagedChannelBuilder
-                .forAddress("localhost", 8080)
+                .forAddress("localhost", 9090)
                 .usePlaintext()
                 .build();
         grpcStub = MessageServiceGrpc.newStub(channel);
@@ -54,7 +54,7 @@ public class ConnectionHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String webSocketSessionId = session.getId();
-        Message grpcMessage = messageMapper.getMessage(message.getPayload());
+        IncomingMessage grpcMessage = messageMapper.getMessage(message.getPayload());
         if (grpcMessage != null) {
             ConnectionContext connectionContext = connectionContextByWebsocketId.get(webSocketSessionId);
             if (connectionContext != null) {
@@ -64,17 +64,20 @@ public class ConnectionHandler extends TextWebSocketHandler {
                             this, session, messageMapper);
                     MessageServiceGrpc.MessageServiceStub authenticatedStub =
                             setupAuthHeader(grpcMessage.getMessage(), receivingObserver);
-                    StreamObserver<Message> sendingObserver = authenticatedStub.sendMessage(receivingObserver);
+                    StreamObserver<IncomingMessage> sendingObserver = authenticatedStub.sendMessage(receivingObserver);
                     connectionContext.setGrpcSendingObserver(sendingObserver);
                 } else {
                     log.info("Forwarding Message {} to the backend", message.getPayload());
                     if (connectionContext.getGrpcSendingObserver() != null) {
                         connectionContext.getGrpcSendingObserver()
                                 .onNext(grpcMessage);
+                    } else {
+                        log.error("No sending observer is set. Cannot forward the message to the server");
                     }
                 }
             }
         } else {
+            log.error("Message cannot be send. Errors while parsing the message");
             // TODO: Send connection error
         }
     }
@@ -89,13 +92,14 @@ public class ConnectionHandler extends TextWebSocketHandler {
         log.info("Disconnecting session {}", webSocketId);
         ConnectionContext connectionContext = connectionContextByWebsocketId
                 .remove(webSocketId);
-        if (connectionContext != null && connectionContext.getGrpcSendingObserver() != null) {
+        if (connectionContext != null) {
             try {
                 connectionContext.getWebSocketSession().close();
             } catch (IOException e) {
                 log.error("Could not close the websocket connection with id {}.\n{}", webSocketId, e.getMessage());
             }
-            connectionContext.getGrpcSendingObserver().onCompleted();
+            if (connectionContext.getGrpcSendingObserver() != null)
+                connectionContext.getGrpcSendingObserver().onCompleted();
         }
     }
 

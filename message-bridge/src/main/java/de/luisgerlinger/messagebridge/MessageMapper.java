@@ -2,7 +2,8 @@ package de.luisgerlinger.messagebridge;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import de.luisgerlinger.grpc.Message;
+import de.luisgerlinger.grpc.IncomingMessage;
+import de.luisgerlinger.grpc.OutgoingMessage;
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class MessageMapper {
 
     @Nullable
-    public synchronized String getJson(Message message) {
+    public synchronized String getJson(OutgoingMessage message) {
         try {
             return JsonFormat.printer().print(message);
         } catch (InvalidProtocolBufferException e) {
@@ -22,8 +23,8 @@ public class MessageMapper {
     }
 
     @Nullable
-    public synchronized Message getMessage(String json) {
-        Message.Builder messageBuilder = Message.newBuilder();
+    public synchronized IncomingMessage getMessage(String json) {
+        IncomingMessage.Builder messageBuilder = IncomingMessage.newBuilder();
         try {
             JsonFormat.parser()
                     .merge(json, messageBuilder);
