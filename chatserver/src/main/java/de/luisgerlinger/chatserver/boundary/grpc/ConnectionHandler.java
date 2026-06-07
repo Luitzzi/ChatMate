@@ -1,22 +1,24 @@
 package de.luisgerlinger.chatserver.boundary.grpc;
 
-import de.luisgerlinger.grpc.Message;
+import de.luisgerlinger.grpc.IncomingMessage;
 import io.grpc.stub.StreamObserver;
 
 import java.util.UUID;
 
-public class ConnectionHandler implements StreamObserver<Message> {
-    private final MessageService messageService;
+public class ConnectionHandler implements StreamObserver<IncomingMessage> {
+    private final MessageServiceImpl messageServiceImpl;
     private final UUID clientId;
+    private final String clientName;
 
-    public ConnectionHandler(MessageService messageService, UUID clientId) {
-        this.messageService = messageService;
+    public ConnectionHandler(MessageServiceImpl messageServiceImpl, UUID clientId, String clientName) {
+        this.messageServiceImpl = messageServiceImpl;
         this.clientId = clientId;
+        this.clientName = clientName;
     }
 
     @Override
-    public void onNext(Message value) {
-        messageService.handleMessage(value);
+    public void onNext(IncomingMessage value) {
+        messageServiceImpl.handleMessage(value, clientId, clientName);
     }
 
     @Override
@@ -26,6 +28,6 @@ public class ConnectionHandler implements StreamObserver<Message> {
 
     @Override
     public void onCompleted() {
-        messageService.disconnectClient(clientId);
+        messageServiceImpl.disconnectClient(clientId);
     }
 }

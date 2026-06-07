@@ -3,8 +3,10 @@ package de.luisgerlinger.chatserver.service;
 import de.luisgerlinger.chatserver.entity.UserBE;
 import de.luisgerlinger.chatserver.repository.UserRepository;
 import de.luisgerlinger.chatserver.security.JwtUtil;
+import de.luisgerlinger.chatserver.service.dto.LoginReplyUiDTO;
 import de.luisgerlinger.chatserver.service.dto.LoginRequestUiDTO;
 import de.luisgerlinger.chatserver.service.dto.RegistrationRequestUiDTO;
+import de.luisgerlinger.chatserver.service.dto.UserUiDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,19 +21,13 @@ import java.util.UUID;
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserBA userBA;
 
     public void register(RegistrationRequestUiDTO registrationRequest) {
-        UserBE user = new UserBE();
-        user.setUsername(registrationRequest.getUsername());
-        user.setPassword(
-                passwordEncoder.encode(registrationRequest.getPassword())
-        );
-        userRepository.save(user);
+        userBA.create(registrationRequest.getUsername(), registrationRequest.getPassword());
     }
 
-    public String login(LoginRequestUiDTO loginRequest) {
+    public LoginReplyUiDTO login(LoginRequestUiDTO loginRequest) {
         String username = loginRequest.getUsername();
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -39,9 +35,12 @@ public class AuthenticationService {
                         loginRequest.getPassword()
                 )
         );
-        UUID userId = userRepository.getUserByUsername(username)
+        UUID userId = userBA.getUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"))
                 .getId();
-        return jwtUtil.generateToken(userId);
+        return LoginReplyUiDTO.builder()
+                .authToken(jwtUtil.generateToken(userId))
+                .userId(userId)
+                .build();
     }
 }
