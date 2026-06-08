@@ -14,14 +14,14 @@ message OutgoingMessage {
   MessageType type = 1;
   string senderId = 2;
   string senderName = 3;
-  string receiverId = 4;
+  string targetId = 4;
   string message = 5;
   google.protobuf.Timestamp timestamp = 6;
 }
 
 message IncomingMessage {
   MessageType type = 1;
-  string receiverId = 2;
+  string targetId = 2;
   string message = 3;
   google.protobuf.Timestamp timestamp = 4;
 }
