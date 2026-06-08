@@ -43,7 +43,7 @@ public class MessageServiceImpl extends MessageServiceGrpc.MessageServiceImplBas
                 .setType(message.getType())
                 .setSenderId(senderId.toString())
                 .setSenderName(senderName)
-                .setReceiverId(message.getReceiverId())
+                .setTargetId(message.getTargetId())
                 .setMessage(message.getMessage())
                 .setTimestamp(message.getTimestamp())
                 .build();
@@ -65,14 +65,14 @@ public class MessageServiceImpl extends MessageServiceGrpc.MessageServiceImplBas
     }
 
     private void forwardMessage(OutgoingMessage message) {
-        if (message.getReceiverId() == null) {
+        if (message.getTargetId() == null) {
             log.error("Trying to send a private message without a defined receiver");
             return;
         }
 
-        log.info("Forwarding message {} to {}", message.getMessage(), message.getReceiverId());
+        log.info("Forwarding message {} to {}", message.getMessage(), message.getTargetId());
         StreamObserver<OutgoingMessage> responseObserver = responseObserversByClientId
-                .get(UUID.fromString(message.getReceiverId()));
+                .get(UUID.fromString(message.getTargetId()));
         responseObserver.onNext(message);
     }
 
