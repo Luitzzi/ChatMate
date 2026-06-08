@@ -13,7 +13,7 @@ export const MessageInput = ({onSend}: MessageInputProps) => {
         if (input !== undefined)
             onSend({
                 type: MessageType.GLOBAL,
-                receiverId: null,
+                targetId: null,
                 message: input,
                 timestamp: new Date()
             } satisfies OutgoingMessage);

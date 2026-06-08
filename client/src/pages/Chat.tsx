@@ -24,7 +24,7 @@ export const Chat = () => {
             type: message.type,
             senderId: authContext.userId as string,
             senderName: authContext.userName as string,
-            receiverId: message.receiverId,
+            targetId: message.targetId,
             message: message.message,
             timestamp: message.timestamp
         };
@@ -40,7 +40,7 @@ export const Chat = () => {
         socket.onopen = () => {
             setIsConnected(true);
             const authMessage: OutgoingMessage = {
-                type: MessageType.AUTH, receiverId: null,
+                type: MessageType.AUTH, targetId: null,
                 message: authContext.token as string, timestamp: new Date()
             };
             sendMessage(authMessage);

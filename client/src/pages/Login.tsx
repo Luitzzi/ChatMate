@@ -1,4 +1,4 @@
-import {Button, Flex, Form, Image, Input, Spin} from "antd";
+import {Button, Flex, Form, Image, Input, notification, Space, Spin} from "antd";
 import FormItem from "antd/es/form/FormItem";
 
 import loginIllustration from '../assets/login-image.png';
@@ -14,7 +14,7 @@ export const Login = () => {
     const navigate = useNavigate();
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
-    const login = async (values: LoginFormValues) => {
+    const onLogin = async (values: LoginFormValues) => {
         try {
             setLoginLoading(true);
             const response = await fetch(
@@ -29,18 +29,23 @@ export const Login = () => {
             );
 
             if (!response.ok)
-                throw new Error("Login failed: " + response.statusText);
+                throw new Error(response.statusText);
             const reply: LoginReply = await response.json();
-            console.log("Login successful, received token: " + reply.authToken);
             setToken(reply.authToken);
             setUserId(reply.userId);
             setUserName(values.username);
+            notification.success({title: "Login successful"});
             navigate("/chat");
         } catch (error) {
+            notification.error({title: "Login failed", description: "Please try agian"});
             console.error("Login failed:", error);
         } finally {
             setLoginLoading(false);
         }
+    }
+
+    const onRegister = () => {
+        navigate("/register");
     }
 
     return (
@@ -59,27 +64,36 @@ export const Login = () => {
                     <h1>Login</h1>
                     <Form
                     name={"login"}
-                    onFinish={login}
+                    onFinish={onLogin}
                     >
-                     <FormItem
+                        <FormItem
                          label={"Username"}
                          name={"username"}
                          rules={[{required: true, message: "Please input your username!"}]}
-                     >
-                         <Input />
-                     </FormItem>
-                     <FormItem
+                        >
+                            <Input />
+                        </FormItem>
+
+                        <FormItem
                          label={"Password"}
                          name={"password"}
                          rules={[{required: true, message: "Please input your password!"}]}
-                     >
-                         <Input />
-                     </FormItem>
-                     <FormItem>
-                         <Button type={"primary"} htmlType={"submit"}>
-                             Submit
-                         </Button>
-                     </FormItem>
+                        >
+                            <Input.Password />
+                        </FormItem>
+                        <Flex justify={"space-between"}>
+                            <FormItem>
+                                <Button onClick={onRegister}>
+                                    Register
+                                </Button>
+                            </FormItem>
+
+                            <FormItem>
+                                <Button type={"primary"} htmlType={"submit"}>
+                                    Submit
+                                </Button>
+                            </FormItem>
+                        </Flex>
                     </Form>
                 </Flex>
             }

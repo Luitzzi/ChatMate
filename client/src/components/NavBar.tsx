@@ -1,8 +1,49 @@
-import {Avatar, Flex, theme} from "antd";
-import {Link} from "react-router";
+import {Avatar, Dropdown, Flex, type MenuProps, theme} from "antd";
+import {Link, useNavigate} from "react-router";
+import {useAuth} from "./auth/useAuth.ts";
+import {UserOutlined} from "@ant-design/icons";
 
 export const NavBar = () => {
     const {token} = theme.useToken();
+    const navigate = useNavigate();
+    const {isAuthenticated, userName} = useAuth();
+
+    const items: MenuProps["items"] = [
+        {
+            key: "logout",
+            label: "logout",
+            danger: true,
+        },
+    ];
+
+    const onClick: MenuProps["onClick"] = ({key}) => {
+        switch (key) {
+            case "logout":
+                navigate("/login");
+                break;
+        }
+    }
+
+    const getAvatar = () => {
+        if (isAuthenticated) {
+            return (
+                <Dropdown menu={{ items, onClick }} trigger={["click"]}>
+                    <Avatar
+                        style={{marginRight: "10px", backgroundColor: token.colorPrimary,
+                            userSelect: "none", cursor: "pointer"}} >
+                        {userName?.charAt(0)}
+                    </Avatar>
+                </Dropdown>);
+        } else {
+            return (
+                <Avatar
+                    style={{marginRight: "10px", backgroundColor: token.colorPrimary,
+                        userSelect: "none", cursor: "none"}}>
+                    <UserOutlined />
+                </Avatar>)
+        }
+    }
+
     return (
         <Flex
             justify={"space-between"}
@@ -26,7 +67,7 @@ export const NavBar = () => {
                   }}>
                 ChatMate
             </Link>
-            <Avatar style={{marginRight: "10px"}}/>
+            {getAvatar()}
         </Flex>
     )
 }

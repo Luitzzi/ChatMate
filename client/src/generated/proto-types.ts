@@ -11,14 +11,14 @@ export type IncomingMessage = {
     type: MessageType;
     senderId: string;
     senderName: string;
-    receiverId: string | null;
+    targetId: string | null;
     message: string;
     timestamp: Date
 }
 
 export type OutgoingMessage = {
     type: MessageType;
-    receiverId: string | null;
+    targetId: string | null;
     message: string;
     timestamp: Date;
 }
