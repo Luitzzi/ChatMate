@@ -1,17 +1,13 @@
 package de.luisgerlinger.chatserver.service;
 
-import de.luisgerlinger.chatserver.entity.UserBE;
-import de.luisgerlinger.chatserver.repository.UserRepository;
 import de.luisgerlinger.chatserver.security.JwtUtil;
 import de.luisgerlinger.chatserver.service.dto.LoginReplyUiDTO;
 import de.luisgerlinger.chatserver.service.dto.LoginRequestUiDTO;
 import de.luisgerlinger.chatserver.service.dto.RegistrationRequestUiDTO;
-import de.luisgerlinger.chatserver.service.dto.UserUiDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
