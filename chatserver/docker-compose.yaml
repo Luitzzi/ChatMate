@@ -1,5 +1,17 @@
 services:
-  postgres:
+  chatserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chatserver
+    depends_on:
+      - chatserver-postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - chatnet
+
+  chatserver-postgres:
     image: postgres:latest
     container_name: postgres-chatserver
     environment:
@@ -11,7 +23,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
     restart: always
+    networks:
+      - chatnet
 
 volumes:
   postgres_data:
     driver: local
+
+networks:
+  chatnet:
+    driver: bridge
