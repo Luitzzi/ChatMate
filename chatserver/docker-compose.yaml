@@ -3,31 +3,41 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: chatserver
+    environment:
+      TOKEN_SECRET: ${TOKEN_SECRET}
+      TOKEN_EXPIRATION_TIME: ${TOKEN_EXPIRATION_TIME}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    container_name: chatmate
     depends_on:
-      - chatserver-postgres
+      - chatmate-postgres
     ports:
       - "8080:8080"
     networks:
       - chatnet
 
-  chatserver-postgres:
+  chatmate-postgres:
     image: postgres:latest
-    container_name: postgres-chatserver
+    container_name: chatmate-postgres
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev
-      POSTGRES_DB: chatserver
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - chatmate_postgres_data:/var/lib/postgresql
     restart: always
     networks:
       - chatnet
 
 volumes:
-  postgres_data:
+  chatmate_postgres_data:
     driver: local
 
 networks:
