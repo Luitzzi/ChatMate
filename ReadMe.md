@@ -26,6 +26,7 @@ Rest to Backend for Registration/Login<br>
   - Design System: Ant Design
 
 ## Features
+![Gif](/images/chat.gif)
 I am currently working on this project for the module *distributed system* at university.
 - Register / Login -> Returns a jwt token
 - The jwt token is sent in the first message to the Bridge-Application
