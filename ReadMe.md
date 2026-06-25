@@ -5,7 +5,10 @@
 ![Docker Badge](https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white)
 ![ChatMate](/images/banner.png)
 (AI Generated)<br>
-Welcome to **ChatMate** - a full-stack chatserver deployable with docker-compose using multiple communication protocols
+
+# Welcome to **ChatMate** <br>
+A full-stack chatserver deployable with docker-compose using multiple communication protocol
+
 ---
 
 ## Techstack
