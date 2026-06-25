@@ -1,6 +1,7 @@
 ![SpringBoot Badge](https://img.shields.io/badge/springboot-000000?style=for-the-badge&logo=springboot&logoColor=green)
 ![React Badge](https://img.shields.io/badge/-React-333333?style=for-the-badge&logo=React)
 ![TS Badge](https://shields.io/badge/TypeScript-3178C6?logo=TypeScript&logoColor=FFF&style=for-the-badge)
+![Postgres Badge](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=white&style=for-the-badge)
 ![Docker Badge](https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white)
 ![ChatMate](/images/banner.png)
 (AI Generated)<br>
